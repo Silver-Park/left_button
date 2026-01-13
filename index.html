@@ -171,6 +171,13 @@
             margin-top: 0.25rem;
         }
 
+        .pair-rank {
+            font-size: 1rem;
+            color: #666;
+            margin-top: 0.25rem;
+            font-weight: 600;
+        }
+
         .ratio-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -1083,8 +1090,13 @@
             
             const sortedData = pairs.map((pair, idx) => ({
                 pair: pair,
-                dividend: dividends[idx]
-            })).sort((a, b) => a.dividend - b.dividend);
+                dividend: dividends[idx],
+                originalIndex: idx  // 원본 인덱스 저장
+            })).sort((a, b) => a.dividend - b.dividend)
+            .map((item, sortedIdx) => ({
+                ...item,
+                rank: item.originalIndex + 1  // 원본 순서 기준 rank
+            }));
             
             // 교차점분석1
             let lowest1 = null;
@@ -1136,7 +1148,8 @@
                                 lowest2 = p2;
                                 crossPoint1 = {
                                     pair: crossPair1_1,
-                                    dividend: dividends[crossIdx1]
+                                    dividend: dividends[crossIdx1],
+                                    rank: crossIdx1 + 1
                                 };
                                 break;
                             } else if (crossIdx2 !== -1) {
@@ -1144,7 +1157,8 @@
                                 lowest2 = p2;
                                 crossPoint1 = {
                                     pair: crossPair1_2,
-                                    dividend: dividends[crossIdx2]
+                                    dividend: dividends[crossIdx2],
+                                    rank: crossIdx2 + 1
                                 };
                                 break;
                             }
@@ -1166,19 +1180,22 @@
                                 label: '최저배당1',
                                 pair: lowest1.pair,
                                 dividend: lowest1.dividend,
-                                proportion: (lowest1.dividend / sum1) * 100
+                                proportion: (lowest1.dividend / sum1) * 100,
+                                rank: lowest1.rank
                             },
                             {
                                 label: '최저배당2',
                                 pair: lowest2.pair,
                                 dividend: lowest2.dividend,
-                                proportion: (lowest2.dividend / sum1) * 100
+                                proportion: (lowest2.dividend / sum1) * 100,
+                                rank: lowest2.rank
                             },
                             {
                                 label: '교차점',
                                 pair: crossPoint1.pair,
                                 dividend: crossPoint1.dividend,
-                                proportion: (crossPoint1.dividend / sum1) * 100
+                                proportion: (crossPoint1.dividend / sum1) * 100,
+                                rank: crossPoint1.rank
                             }
                         ]
                     };
@@ -1248,12 +1265,14 @@
                                 if (crossIdx1 !== -1) {
                                     crossPoint2 = {
                                         pair: crossPair_1,
-                                        dividend: dividends[crossIdx1]
+                                        dividend: dividends[crossIdx1],
+                                        rank: crossIdx1 + 1
                                     };
                                 } else {
                                     crossPoint2 = {
                                         pair: crossPair_2,
-                                        dividend: dividends[crossIdx2]
+                                        dividend: dividends[crossIdx2],
+                                        rank: crossIdx2 + 1
                                     };
                                 }
                                 break;
@@ -1276,19 +1295,22 @@
                                 label: '1번짝',
                                 pair: pair2_1.pair,
                                 dividend: pair2_1.dividend,
-                                proportion: (pair2_1.dividend / sum2) * 100
+                                proportion: (pair2_1.dividend / sum2) * 100,
+                                rank: pair2_1.rank
                             },
                             {
                                 label: '2번짝',
                                 pair: pair2_2.pair,
                                 dividend: pair2_2.dividend,
-                                proportion: (pair2_2.dividend / sum2) * 100
+                                proportion: (pair2_2.dividend / sum2) * 100,
+                                rank: pair2_2.rank
                             },
                             {
                                 label: '교차점',
                                 pair: crossPoint2.pair,
                                 dividend: crossPoint2.dividend,
-                                proportion: (crossPoint2.dividend / sum2) * 100
+                                proportion: (crossPoint2.dividend / sum2) * 100,
+                                rank: crossPoint2.rank
                             }
                         ]
                     };
@@ -1361,12 +1383,14 @@
                                 if (crossIdx1 !== -1) {
                                     crossPoint3 = {
                                         pair: crossPair_1,
-                                        dividend: dividends[crossIdx1]
+                                        dividend: dividends[crossIdx1],
+                                        rank: crossIdx1 + 1
                                     };
                                 } else {
                                     crossPoint3 = {
                                         pair: crossPair_2,
-                                        dividend: dividends[crossIdx2]
+                                        dividend: dividends[crossIdx2],
+                                        rank: crossIdx2 + 1
                                     };
                                 }
                                 break;
@@ -1389,19 +1413,22 @@
                                 label: '1위',
                                 pair: pair3_1.pair,
                                 dividend: pair3_1.dividend,
-                                proportion: (pair3_1.dividend / sum3) * 100
+                                proportion: (pair3_1.dividend / sum3) * 100,
+                                rank: pair3_1.rank
                             },
                             {
                                 label: '2위',
                                 pair: pair3_2.pair,
                                 dividend: pair3_2.dividend,
-                                proportion: (pair3_2.dividend / sum3) * 100
+                                proportion: (pair3_2.dividend / sum3) * 100,
+                                rank: pair3_2.rank
                             },
                             {
                                 label: '교차점',
                                 pair: crossPoint3.pair,
                                 dividend: crossPoint3.dividend,
-                                proportion: (crossPoint3.dividend / sum3) * 100
+                                proportion: (crossPoint3.dividend / sum3) * 100,
+                                rank: crossPoint3.rank
                             }
                         ]
                     };
@@ -1511,6 +1538,7 @@
                                 label: '1위',
                                 pair: foundPair1.pair,
                                 dividend: foundPair1.dividend,
+                                rank: foundPair1.rank,
                                 proportion: 0
                             }
                         ];
@@ -1520,6 +1548,7 @@
                                 label: '2위',
                                 pair: foundPair2.pair,
                                 dividend: foundPair2.dividend,
+                                rank: foundPair2.rank,
                                 proportion: 0
                             });
                         } else {
@@ -1536,6 +1565,7 @@
                                 label: '교차점',
                                 pair: foundCrossPoint.pair,
                                 dividend: foundCrossPoint.dividend,
+                                rank: foundCrossPoint.rank,
                                 proportion: 0
                             });
                         } else {
@@ -1799,6 +1829,7 @@
                         </div>
                         <div class="dividend-value" style="background-color: ${bgColor}">${item.dividend}</div>
                         <div class="proportion-value">${item.proportion.toFixed(2)}%</div>
+                        <div class="pair-rank">${item.rank ? item.rank + '번째' : ''}</div>
                     </div>`;
                 });
                 html += `</div><div class="ratio-grid">
@@ -1828,6 +1859,8 @@
                         </div>
                         <div class="dividend-value">${item.dividend}</div>
                         <div class="proportion-value">${item.proportion.toFixed(2)}%</div>
+                    
+                        <div class="pair-rank">${item.rank ? item.rank + '번째' : ''}</div>
                     </div>`;
                 });
                 html += `</div><div class="ratio-grid">
@@ -1857,6 +1890,8 @@
                         </div>
                         <div class="dividend-value">${item.dividend}</div>
                         <div class="proportion-value">${item.proportion.toFixed(2)}%</div>
+                    
+                        <div class="pair-rank">${item.rank ? item.rank + '번째' : ''}</div>
                     </div>`;
                 });
                 html += `</div><div class="ratio-grid">
@@ -1900,6 +1935,7 @@
                                 </div>
                                 <div class="dividend-value" style="background-color: ${bgColor}">${item.dividend}</div>
                                 <div class="proportion-value">${item.proportion.toFixed(2)}%</div>
+                                <div class="pair-rank">${item.rank ? item.rank + '번째' : ''}</div>
                             </div>`;
                         }
                     });
